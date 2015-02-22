@@ -1,0 +1,2 @@
+// Ensemble des règles utilisées par le moteur d’inférence sous un format spécifique.
+// prémisse1, ..., prémisseN  => conséquence
