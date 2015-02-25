@@ -343,7 +343,7 @@ class FenetreJeu extends JFrame implements ActionListener {
 
 					if (listeBateau[i].getEtat() > 0) {
 						MonLabel.setText(listeBateau[i].getNom()
-								+ " a été touché...");
+								+ " a été touché..."); 
 					} else {
 						MonLabel.setText(listeBateau[i].getNom()
 								+ " a été coulé...");
