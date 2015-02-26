@@ -1,5 +1,11 @@
 package warfare;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
@@ -23,7 +29,21 @@ public class MoteurInference {
 	 * @param urlFichier
 	 */
 	public MoteurInference(String urlFichier) {
-		myRules.add(new Regles("PasDeFaits=>JouerRandom"));
+		try {
+			InputStream inps = new FileInputStream(urlFichier); 
+			InputStreamReader inpsr = new InputStreamReader(inps);
+			BufferedReader br = new BufferedReader(inpsr);
+			String regle;
+			while ((regle = br.readLine()) != null) {
+				myRules.add(new Regles(regle));
+			}
+			br.close();
+		} catch(FileNotFoundException e) {
+			System.err.println("Fichier de règles absent !!!!!" + e.getMessage());
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+/*		myRules.add(new Regles("PasDeFaits=>JouerRandom"));
 		myRules.add(new Regles("Couler=>DeleteFaits"));
 		myRules.add(new Regles("JouerACoteHautReussite,JouerACoteHautFail=>JouerACoteBas"));
 		myRules.add(new Regles("JouerACoteHautReussite=>JouerACoteHaut"));
@@ -36,7 +56,7 @@ public class MoteurInference {
 		myRules.add(new Regles("JouerADroiteFail=>JouerAGauche"));
 		myRules.add(new Regles("JouerACoteBasFail=>JouerADroite"));
 		myRules.add(new Regles("JouerACoteHautFail=>JouerACoteBas"));
-		myRules.add(new Regles("Toucher=>JouerACoteHaut"));
+		myRules.add(new Regles("Toucher=>JouerACoteHaut"));*/
 		this.bateauCible='0';
 		dernierCoup = new int[2];
 		dernierCoupTouche = new int[2];

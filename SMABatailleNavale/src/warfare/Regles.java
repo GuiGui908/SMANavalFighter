@@ -95,6 +95,26 @@ public class Regles {
 	protected void setConsequence(String consequence) {
 		this.consequence = consequence;
 	}
-	
-	
+
+	/*
+	 * // Ensemble des règles utilisées par le moteur d’inférence sous un format spécifique.
+		// prémisse1, ..., prémisseN  => conséquence
+		
+		PasDeFaits=>JouerRandom
+		Couler=>DeleteFaits
+		JouerACoteHautReussite,JouerACoteHautFail=>JouerACoteBas
+		JouerACoteHautReussite=>JouerACoteHaut
+		JouerACoteBasReussite,JouerACoteBasFail=>JouerACoteHaut
+		JouerACoteBasReussite=>JouerACoteBas
+		JouerADroiteReussite,JouerADroiteFail=>JouerAGauche
+		JouerADroiteReussite=>JouerADroite
+		JouerAGaucheReussite,JouerAGaucheFail=>JouerADroite
+		JouerAGaucheReussite=>JouerAGauche
+		JouerACoteHautFail=>JouerACoteBas
+		JouerACoteBasFail=>JouerADroite
+		JouerADroiteFail=>JouerAGauche
+		Toucher=>JouerACoteHaut
+*/
+
+
 }

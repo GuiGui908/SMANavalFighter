@@ -41,7 +41,7 @@ class FenetreJeu extends JFrame implements ActionListener {
 
 	public FenetreJeu() {
 		
-		moteurInf = new MoteurInference("lulz");
+		moteurInf = new MoteurInference("bin/Battleship.rules");
 		
 		int i = 0;
 		int j = 0;
@@ -536,7 +536,7 @@ class FenetreJeu extends JFrame implements ActionListener {
 				int pos_x = pos[0];
 				int pos_y = pos[1];
 				char t = '0';
-				if(pos[0]<0||pos[0]>9||pos[1]<0||pos[1]>9){
+				if(pos[0]<0||pos[0]>9||pos[1]<0||pos[1]>9){		// Si le coup sort du cadre, on fait rien (donc on relance calculCoup())
 					ok=false;
 				}
 				else{
@@ -545,16 +545,12 @@ class FenetreJeu extends JFrame implements ActionListener {
 				}
 					
 				
-				if(!ok){
-					if(moteurInf.getBateauCible()==t-5&&!(pos[0]<0||pos[0]>9||pos[1]<0||pos[1]>9)){
+				if(!ok){	// La fonction jouer a retourné FALSE
+					// Si ce coup a déjà été joué et que ce coup est le bateau cible
+					if(moteurInf.getBateauCible()==t-5) {  // && !(pos[0]<0||pos[0]>9||pos[1]<0||pos[1]>9)){
 						moteurInf.miseAjourFaits(true);
-						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
-						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
-						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
-						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
-						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
-						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
-						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
+						moteurInf.setDernierCoup(pos);
+						System.out.println("J'ai été exécuté (donc je suis mort, lol)\n\n");
 					}
 					else{
 						moteurInf.miseAjourFaits(false);
