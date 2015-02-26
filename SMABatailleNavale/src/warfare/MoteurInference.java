@@ -1,5 +1,7 @@
 package warfare;
 
+import java.util.ArrayList;
+
 
 /**
  * Fonctionnalités relatives à la gestion des faits et des règles ainsi que la prise de décision.
@@ -8,6 +10,12 @@ public class MoteurInference {
 
 	// Ensemble d'objets règles.... ?
 	// Ensemble de faits ?
+	private ArrayList<Regles> myRules = new ArrayList<Regles>();
+	private ArrayList<String> myFacts = new ArrayList<String>();
+	protected int[] dernierCoup;
+	protected String derniereConsequence;
+	protected int[] dernierCoupTouche;
+	protected char bateauCible;
 	
 	/**
 	 * Constructeur.
@@ -15,7 +23,25 @@ public class MoteurInference {
 	 * @param urlFichier
 	 */
 	public MoteurInference(String urlFichier) {
-		
+		myRules.add(new Regles("PasDeFaits=>JouerRandom"));
+		myRules.add(new Regles("Couler=>DeleteFaits"));
+		myRules.add(new Regles("JouerACoteHautReussite,JouerACoteHautFail=>JouerACoteBas"));
+		myRules.add(new Regles("JouerACoteHautReussite=>JouerACoteHaut"));
+		myRules.add(new Regles("JouerACoteBasReussite,JouerACoteBasFail=>JouerACoteHaut"));
+		myRules.add(new Regles("JouerACoteBasReussite=>JouerACoteBas"));
+		myRules.add(new Regles("JouerADroiteReussite,JouerADroiteFail=>JouerAGauche"));
+		myRules.add(new Regles("JouerADroiteReussite=>JouerADroite"));
+		myRules.add(new Regles("JouerAGaucheReussite,JouerAGaucheFail=>JouerADroite"));
+		myRules.add(new Regles("JouerAGaucheReussite=>JouerAGauche"));
+		myRules.add(new Regles("JouerADroiteFail=>JouerAGauche"));
+		myRules.add(new Regles("JouerACoteBasFail=>JouerADroite"));
+		myRules.add(new Regles("JouerACoteHautFail=>JouerACoteBas"));
+		myRules.add(new Regles("Toucher=>JouerACoteHaut"));
+		this.bateauCible='0';
+		dernierCoup = new int[2];
+		dernierCoupTouche = new int[2];
+		dernierCoup[0]=0;dernierCoup[1]=0;
+		dernierCoupTouche[0]=0;dernierCoupTouche[1]=0;
 	}
 	
 	/**
@@ -23,7 +49,20 @@ public class MoteurInference {
 	 * @return vrai si le fait est solution, cad qu'il ne fait pas partie des faits connus.
 	 */
 	public boolean estSolution(String fait) {
-		return false;
+		boolean b = false;
+		for(int i=0;i<myFacts.size();i++){
+			if(myFacts.equals(fait))
+				b=true;
+		}
+		return b;
+	}
+	
+	public void addFact(String unFait){
+		myFacts.add(unFait);
+	}
+	
+	public void clearFact(){
+		myFacts.clear();
 	}
 	
 	/**
@@ -40,7 +79,88 @@ public class MoteurInference {
 	 * @return le prochain coup à jouer.
 	 */
 	public int[] calculCoup() {
-		int[] coup = new int[] {0, 0};
+		int[] coup = new int[2];
+		coup[0]=dernierCoup[0];
+		coup[1]=dernierCoup[1];
+		int i =0;
+		String consequence="";
+		boolean b= false;
+		while(i<myRules.size()&&!b){
+			if(myRules.get(i).satisfaitConditionS(myFacts)){
+				consequence = (myRules.get(i)).getConsequence();
+				b=true;
+			}
+			i++;
+		}
+		if(myFacts.size()==0)
+			consequence="JouerRandom";
+		switch(consequence){
+		case "JouerRandom": coup[0]=(int) (Math.random()*10);coup[1]=(int) (Math.random()*10); break;
+		case "JouerACoteHaut": coup[0]=coup[0]-1; break;
+		case "JouerACoteBas": coup[0]=coup[0]+1; break;
+		case "JouerADroite": coup[1]=coup[1]+1; break;
+		case "JouerAGauche": coup[1]=coup[1]-1; break;
+		case "DeleteFaits": this.clearFact(); coup[0]=(int) (Math.random()*10);coup[1]=(int) (Math.random()*10); break;
+		default: System.out.println("Problème rencontré dans le switchCase conséquence :"+consequence); break;
+		}
+		this.derniereConsequence=consequence;
+		System.out.println("Conséquence: "+consequence);
 		return coup; 
 	}
+	
+	protected void miseAjourFaits(boolean consequenceSucces){
+		switch(derniereConsequence){
+		case "JouerRandom": if(consequenceSucces) this.addFact("Toucher"); break;
+		case "DeleteFaits" : break;
+		default: 
+			if(consequenceSucces) 
+				this.addFact(derniereConsequence+"Reussite");
+			else  
+				this.addFact(derniereConsequence+"Fail");
+		}
+	}
+
+	protected int[] getDernierCoup() {
+		return dernierCoup;
+	}
+
+	protected void setDernierCoup(int[] dernierCoup) {
+		this.dernierCoup[0] = dernierCoup[0];
+		this.dernierCoup[1] = dernierCoup[1];
+	}
+
+	protected String getDerniereConsequence() {
+		return derniereConsequence;
+	}
+
+	protected void setDerniereConsequence(String derniereConsequence) {
+		this.derniereConsequence = derniereConsequence;
+	}
+
+	protected int[] getDernierCoupTouche() {
+		return dernierCoupTouche;
+	}
+
+	protected void setDernierCoupTouche(int[] dernierCoupTouche) {
+		this.dernierCoupTouche[0] = dernierCoupTouche[0];
+		this.dernierCoupTouche[1] = dernierCoupTouche[1];
+	}
+
+	protected char getBateauCible() {
+		return bateauCible;
+	}
+
+	protected void setBateauCible(char bateauCible) {
+		this.bateauCible = bateauCible;
+	}
+
+	protected ArrayList<String> getMyFacts() {
+		return myFacts;
+	}
+
+	protected void setMyFacts(ArrayList<String> myFacts) {
+		this.myFacts = myFacts;
+	}
+	
+	
 }

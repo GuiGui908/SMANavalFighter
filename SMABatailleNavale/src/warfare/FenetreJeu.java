@@ -33,13 +33,16 @@ class FenetreJeu extends JFrame implements ActionListener {
 	private ImageIcon test;
 
 	private boolean terminer = false;
+	protected MoteurInference moteurInf;
 
 	// ********************************************************************
 	// Constructeur de la fenetre
 	// ********************************************************************
 
 	public FenetreJeu() {
-
+		
+		moteurInf = new MoteurInference("lulz");
+		
 		int i = 0;
 		int j = 0;
 
@@ -526,13 +529,78 @@ class FenetreJeu extends JFrame implements ActionListener {
 			ConnaissanceAgent = CensureGrille();
 
 			// ************** Section à modifier commence ici *************
-
-			while (!ok) {
-
-				int pos_x = getRandomNum(0, 9);
-				int pos_y = getRandomNum(0, 9);
-
-				ok = jouer(pos_x, pos_y);
+			int y=0;
+			while (!ok&&y<30) {
+				y++;
+				int[] pos = moteurInf.calculCoup();
+				int pos_x = pos[0];
+				int pos_y = pos[1];
+				char t = '0';
+				if(pos[0]<0||pos[0]>9||pos[1]<0||pos[1]>9){
+					ok=false;
+				}
+				else{
+					t = this.GrilleVirtuelle[pos[0]][pos[1]];
+					ok = jouer(pos_x, pos_y);
+				}
+					
+				
+				if(!ok){
+					if(moteurInf.getBateauCible()==t-5&&!(pos[0]<0||pos[0]>9||pos[1]<0||pos[1]>9)){
+						moteurInf.miseAjourFaits(true);
+						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
+						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
+						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
+						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
+						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
+						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
+						System.out.println("J'ai été exécuté (donc je suis mort, lol)");
+					}
+					else{
+						moteurInf.miseAjourFaits(false);
+					}
+					
+				}
+				else{
+					if(moteurInf.getBateauCible()!='0'){
+						if(t!=moteurInf.getBateauCible()){
+							moteurInf.miseAjourFaits(false);
+							moteurInf.setDernierCoup(moteurInf.getDernierCoupTouche());
+						}
+						else
+						{
+							moteurInf.miseAjourFaits(true);
+							moteurInf.setDernierCoup(pos);
+							for(int i=0; i<listeBateau.length;i++){
+								if(moteurInf.getBateauCible()==listeBateau[i].getCode()){
+									if(listeBateau[i].getEtat()==0){
+										moteurInf.addFact("Couler");
+										moteurInf.setBateauCible('0');
+									}
+								}
+							}
+							
+						}
+					}
+					else{
+						if(t=='a'||t=='b'||t=='c'||t=='d'||t=='e'){
+							moteurInf.setBateauCible(t);
+							moteurInf.setDernierCoupTouche(pos);
+							moteurInf.addFact("Toucher");
+							moteurInf.setDernierCoup(moteurInf.getDernierCoupTouche());
+						}
+					}
+					
+				}
+				int p11=moteurInf.getDernierCoupTouche()[0]; int p12 = moteurInf.getDernierCoupTouche()[1];
+				int p21=moteurInf.getDernierCoup()[0]; int p22 = moteurInf.getDernierCoup()[1];
+				String s=""+ok+"{"+pos[0]+","+pos[1]+"}"+"{"+p11+","+p12+"}"+"{"+p21+","+p22+"}"+" Mes faits:";
+				for(int i = 0; i<moteurInf.getMyFacts().size();i++){
+					s=s+", "+moteurInf.getMyFacts().get(i);
+					
+				}
+				System.out.println(s);
+				
 			}
 
 			// ************** Section à modifier termine ici *************
