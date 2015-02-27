@@ -529,9 +529,7 @@ class FenetreJeu extends JFrame implements ActionListener {
 			ConnaissanceAgent = CensureGrille();
 
 			// ************** Section à modifier commence ici *************
-			int y=0;
-			while (!ok&&y<30) {
-				y++;
+			while (!ok) {
 				int[] pos = moteurInf.calculCoup();
 				int pos_x = pos[0];
 				int pos_y = pos[1];
@@ -552,18 +550,26 @@ class FenetreJeu extends JFrame implements ActionListener {
 						moteurInf.setDernierCoup(pos);
 						System.out.println("J'ai été exécuté (donc je suis mort, lol)\n\n");
 					}
-					else{
+					else{	// Si ce coup a déjà été joué mais qu'il n'est PAS le bateau cible
 						moteurInf.miseAjourFaits(false);
 					}
 					
 				}
 				else{
-					if(moteurInf.getBateauCible()!='0'){
-						if(t!=moteurInf.getBateauCible()){
+					if(moteurInf.getBateauCible()!='0'){	  // Si on a un bateau cible
+						if(t!=moteurInf.getBateauCible()){		// Si on a pas touché le bateau cible
 							moteurInf.miseAjourFaits(false);
 							moteurInf.setDernierCoup(moteurInf.getDernierCoupTouche());
+							if(t!='v') {
+								// Enregistrer cette case
+								char[] bateau = new char[3];
+								bateau[0] = (char) pos[0];
+								bateau[1] = (char) pos[1];
+								bateau[2] = t;
+								moteurInf.addBateauDecouvert(bateau);
+							}
 						}
-						else
+						else	// Si on a touché le bateau cible
 						{
 							moteurInf.miseAjourFaits(true);
 							moteurInf.setDernierCoup(pos);

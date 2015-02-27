@@ -22,6 +22,7 @@ public class MoteurInference {
 	protected String derniereConsequence;
 	protected int[] dernierCoupTouche;
 	protected char bateauCible;
+	protected ArrayList<char[]> bateauDecouvert = new ArrayList<char[]>(); 
 	
 	/**
 	 * Constructeur.
@@ -115,12 +116,25 @@ public class MoteurInference {
 		if(myFacts.size()==0)
 			consequence="JouerRandom";
 		switch(consequence){
-		case "JouerRandom": coup[0]=(int) (Math.random()*10);coup[1]=(int) (Math.random()*10); break;
+		case "JouerRandom": coup = myRandom(); break;
 		case "JouerACoteHaut": coup[0]=coup[0]-1; break;
 		case "JouerACoteBas": coup[0]=coup[0]+1; break;
 		case "JouerADroite": coup[1]=coup[1]+1; break;
 		case "JouerAGauche": coup[1]=coup[1]-1; break;
-		case "DeleteFaits": this.clearFact(); coup[0]=(int) (Math.random()*10);coup[1]=(int) (Math.random()*10); break;
+		case "DeleteFaits": this.clearFact();
+				if(bateauDecouvert.isEmpty()) {
+					coup = myRandom();
+				}
+				else {
+					addFact("Toucher");
+					dernierCoupTouche[0] = (int)bateauDecouvert.get(0)[0];
+					dernierCoupTouche[1] = (int)bateauDecouvert.get(0)[1];
+					coup[0] = dernierCoupTouche[0];
+					coup[1] = dernierCoupTouche[1];
+					bateauCible = bateauDecouvert.get(0)[2];
+					this.delBateauDecouvert();
+				}
+				break;
 		default: System.out.println("Problème rencontré dans le switchCase conséquence :"+consequence); break;
 		}
 		this.derniereConsequence=consequence;
@@ -182,5 +196,24 @@ public class MoteurInference {
 		this.myFacts = myFacts;
 	}
 	
+	protected void addBateauDecouvert(char[] bateau) {
+		bateauDecouvert.add(bateau);
+	}
+	
+	protected void delBateauDecouvert() {
+		if(!bateauDecouvert.isEmpty()) {
+			bateauDecouvert.remove(0);
+		}
+	}
+	
+	private int[] myRandom() {
+		int[] nb = new int[2];
+		do {
+			 nb[0] = (int) (Math.random()*10);
+			 nb[1] = (int) (Math.random()*10);
+		}
+		while((nb[0]+nb[1])%2 != 0);
+		return nb;
+	}
 	
 }
